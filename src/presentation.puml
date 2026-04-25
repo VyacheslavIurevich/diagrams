@@ -1,0 +1,26 @@
+@startuml
+namespace Presentation {
+    class Input {
+        + pollKeyboard(): InputAction
+        + isKeyPressed(key: String): boolean
+    }
+
+    class Screen {
+        + clear()
+        + drawPixel(x: int, y: int, color: Color)
+        + drawSprite(x: int, y: int, sprite: int[][])
+        + refresh()
+    }
+
+    enum InputAction {
+        MOVE_UP
+        MOVE_DOWN
+        MOVE_LEFT
+        MOVE_RIGHT
+        USE_ITEM
+        EXIT
+    }
+
+    Input ..> InputAction : <<use>>
+}
+@enduml

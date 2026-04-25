@@ -1,0 +1,45 @@
+@startuml
+title Roguelike - Component Diagram
+
+component "Presentation Layer" {
+    [Input] as Input
+    [Screen] as Screen
+}
+
+component "Application Layer" {
+    [Render] as AppRender
+}
+
+component "Domain Layer" {
+    [Plot] as Plot
+    [Scene] as Scene
+    [GameObj] as GameObj
+    [Item] as Item
+    [Tile] as Tile
+}
+
+component "Infrastructure Layer" {
+    [RandomGenerator] as RG
+    [Storage] as Storage
+    [TileEngine] as TileEngine
+    [Sprite] as Sprite
+}
+
+Input -> AppRender : "Sends user actions"
+AppRender -> Plot : "Invokes game logic"
+AppRender -> Screen : "Sends frames data"
+AppRender -> TileEngine : "Delegates rendering"
+Plot -> Scene : "Updates scene"
+Scene *-- GameObj
+Scene *-- Item
+Scene *-- Tile
+GameObj *-- Item : "Inventory"
+Plot --> RG : "Uses"
+Plot --> Storage : "Uses"
+Storage ..> Scene : "Loads/saves"
+Storage ..> Sprite : "Provides"
+TileEngine ..> Storage : "Fetches sprites"
+TileEngine ..> Sprite : "Caches and uses"
+TileEngine -> Screen : "Draws via"
+Tile ..> Sprite : "References sprite"
+@enduml

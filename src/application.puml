@@ -1,0 +1,23 @@
+@startuml
+namespace Application {
+    enum InitType {
+        LOAD
+        GENERATE
+    }
+
+    class Render {
+        - currentScene: Domain.Scene
+        - gamePlot: Domain.Plot
+        - tileEngine: Infrastructure.TileEngine
+        + initScene(initType: InitType, sceneIdent: String)
+        + computeChange(input: Presentation.InputAction)
+        + killScene()
+        + render(display: Presentation.Screen)
+        - renderMap(display: Presentation.Screen)
+        - renderEntities(display: Presentation.Screen)
+        - renderItems(display: Presentation.Screen)
+    }
+
+    Render ..> InitType : <<use>>
+}
+@enduml
