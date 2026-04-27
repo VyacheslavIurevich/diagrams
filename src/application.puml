@@ -12,10 +12,10 @@ namespace Application {
         + initScene(initType: InitType, sceneIdent: String)
         + computeChange(input: Presentation.InputAction)
         + killScene()
-        + render(display: Presentation.Screen)
-        - renderMap(display: Presentation.Screen)
-        - renderEntities(display: Presentation.Screen)
-        - renderItems(display: Presentation.Screen)
+        + render(buf: Presentation.Screen.buffer, input: Presentation.Input)
+        - renderMap(buf: Presentation.Screen.buffer, input: Presentation.Input)
+        - renderEntities(buf: Presentation.Screen.buffer, input: Presentation.Input)
+        - renderItems(buf: Presentation.Screen.buffer, input: Presentation.Input)
     }
 
     Render ..> InitType : <<use>>

@@ -60,6 +60,5 @@ component Infrastructure {
     GameObjectData *-- ComponentData : "contains list of"
     GameObjectData ..> GameObjType : <<use>>
     TileEngine ..> Storage : "fetches sprites"
-    TileEngine ..> Sprite : <<use>>
 }
 @enduml

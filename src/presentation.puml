@@ -1,11 +1,15 @@
 @startuml
 namespace Presentation {
+    class IOManager {
+        + callRenderer(input: Input, buffer: int[][])
+    }
     class Input {
         + pollKeyboard(): InputAction
         + isKeyPressed(key: String): boolean
     }
 
     class Screen {
+        buffer: int[][]
         + clear()
         + drawPixel(x: int, y: int, color: Color)
         + drawSprite(x: int, y: int, sprite: int[][])
@@ -22,5 +26,7 @@ namespace Presentation {
     }
 
     Input ..> InputAction : <<use>>
+    IOManager -- Input
+    IOManager -- Screen
 }
 @enduml

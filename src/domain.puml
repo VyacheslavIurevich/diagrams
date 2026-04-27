@@ -12,6 +12,7 @@ namespace Domain {
     class Item {
         + ident: String
         + name: String
+        + position: Point
         - effect: IEffect
         + apply(target: GameObj)
     }
@@ -43,7 +44,7 @@ namespace Domain {
         + ident: String
         + entities: List<GameObj>
         + items: List<Item>
-        + tiles: Map<int, Tile>
+        + tiles: Map<int, int, Tile>
         + mainCharacterIdent: String
         + levelMap: int[][]
     }
@@ -53,7 +54,7 @@ namespace Domain {
         - storage: Infrastructure.Storage
         + uploadScene(name: String): Scene
         + generateScene(seed: int): Scene
-        + dealDamage(source: GameObj, target: GameObj)
+        + dealDamage(source: GameObj)
         + moveObject(obj: GameObj, direction: Vector)
         + canMoveTo(x: int, y: int, movementType: MovementType): boolean
         + exitGame()
