@@ -1,0 +1,67 @@
+@startuml
+title Roguelike - Component Decoration by Identity
+
+namespace Domain {
+
+    interface IComponent {
+        + ident: String
+    }
+
+    interface IMovementStrategy {
+        + getDirection(coords: Pair<int>): Vector
+    }
+
+    class AggressiveStrategy implements IMovementStrategy
+    class PassiveStrategy implements IMovementStrategy
+    class ChickenStrategy implements IMovementStrategy
+    class ConfusedStrategy implements IMovementStrategy
+
+    class MovementComponent implements IComponent {
+        + ident: String = "movement"
+        - strategy: IMovementStrategy
+        - actor: GameObj
+        + makeMovement(coords: Pair<int>): Vector
+        + getStrategy(): IMovementStrategy
+    }
+
+    interface IEffectDecorator {
+        + isExpired(): boolean
+        + tick(): void
+    }
+
+    abstract class MovementComponentDecorator extends MovementComponent implements IEffectDecorator {
+        # wrappedComponent: MovementComponent
+        # duration: int
+        + makeMovement(coords: Pair<int>): Vector
+        + getStrategy(): IMovementStrategy
+    }
+
+    class ConfusionComponentDecorator extends MovementComponentDecorator {
+        - confusedStrategy: IMovementStrategy
+        + makeMovement(coords: Pair<int>): Vector
+        + getStrategy(): IMovementStrategy
+    }
+
+    interface IEffect {
+        + execute(target: GameObj)
+    }
+
+    class ConfusionEffect implements IEffect {
+        - duration: int
+        + execute(target: GameObj)
+    }
+
+    class GameObj {
+        + ident: String
+        - components: Map<String, IComponent>
+        + getComponent(ident: String): IComponent
+    }
+
+    GameObj *-- IComponent
+    MovementComponent o-- IMovementStrategy : "delegates logic"
+    MovementComponentDecorator o-- MovementComponent : "wraps"
+    ConfusionEffect ..> GameObj : "triggers"
+    ConfusionEffect ..> ConfusionComponentDecorator : "creates"
+}
+
+@enduml
