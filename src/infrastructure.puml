@@ -21,9 +21,22 @@ component Infrastructure {
         + getSprite(spriteIdent: int): Sprite
     }
 
+    ' === РЕАЛИЗАЦИЯ ПАТТЕРНА СТРОИТЕЛЬ ===
+    class ConcreteMapBuilder implements Domain.IMapBuilder {
+        - storage: Storage
+        - random: RandomGenerator
+        - scene: Domain.Scene
+        + setDimensions(width: int, height: int): ConcreteMapBuilder
+        + buildTerrain(): ConcreteMapBuilder
+        + spawnMobs(factory: Domain.IGameFactory, count: int): ConcreteMapBuilder
+        + spawnItems(factory: Domain.IGameFactory, count: int): ConcreteMapBuilder
+        + loadFromFile(filePath: String): ConcreteMapBuilder
+        + getResult(): Domain.Scene
+    }
+
     class TileEngine {
         - spriteCache: Map<int, Sprite>
-        + renderMap(display: Presentation.Screen, levelMap: int[][], tiles: Map<int, Domain.Tile>)
+        + renderMap(display: Presentation.Screen, levelMap: int[][], tiles: Map<int, Domain.Tile>)       
         + renderSprite(display: Presentation.Screen, x: int, y: int, spriteIdent: int)
         + renderText(display: Presentation.Screen, x: int, y: int, text: String)
         - loadSprite(spriteIdent: int): Sprite
@@ -56,9 +69,10 @@ component Infrastructure {
 
     Storage ..> SceneData : <<use>>
     Storage ..> Sprite : <<use>>
+    ConcreteMapBuilder --> Storage : "reads data"
+    ConcreteMapBuilder --> RandomGenerator : "generates coordinates"
     SceneData *-- GameObjectData : "contains list of"
     GameObjectData *-- ComponentData : "contains list of"
-    GameObjectData ..> GameObjType : <<use>>
     TileEngine ..> Storage : "fetches sprites"
-}
+    GameObjectData ..> GameObjType : <<use>>
 @enduml

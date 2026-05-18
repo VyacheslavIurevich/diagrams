@@ -9,24 +9,31 @@ namespace Domain {
         FLY_ONLY
     }
 
-    class Item {
+    ' === ПАТТЕРН: ПРОТОТИП ===
+    interface ICloneable<T> {
+        + clone(): T
+    }
+
+    class Item implements ICloneable {
         + ident: String
         + name: String
         + position: Point
         - effect: IEffect
         + apply(target: GameObj)
+        + clone(): Item
     }
 
     interface IEffect {
         + execute(target: GameObj)
     }
 
-    class GameObj {
+    class GameObj implements ICloneable {
         + ident: String
         + position: Point
         - components: List<IComponent>
         + getComponent<T>(): T
         + addComponent(comp: IComponent)
+        + clone(): GameObj
     }
 
     interface IComponent {
@@ -49,11 +56,39 @@ namespace Domain {
         + levelMap: int[][]
     }
 
+    ' === ПАТТЕРН: АБСТРАКТНАЯ ФАБРИКА ===
+    interface IGameFactory {
+        + createMob(type: String, p: Point): GameObj
+        + createItem(type: String, p: Point): Item
+    }
+
+    class HellFactory implements IGameFactory {
+        + createMob(type: String, p: Point): GameObj
+        + createItem(type: String, p: Point): Item   
+    }
+
+    class GreekFactory implements IGameFactory {
+        + createMob(type: String, p: Point): GameObj 
+        + createItem(type: String, p: Point): Item   
+    }
+
+    ' === ПАТТЕРН: СТРОИТЕЛЬ ===
+    interface IMapBuilder {
+        + setDimensions(width: int, height: int): IMapBuilder
+        + buildTerrain(): IMapBuilder
+        + spawnItems(factory: IGameFactory, count: int): IMapBuilder
+        + spawnMobs(factory: IGameFactory, count: int): IMapBuilder
+        + loadFromFile(filePath: String): IMapBuilder
+        + getResult(): Scene
+    }
+
     class Plot {
         - random: Infrastructure.RandomGenerator
         - storage: Infrastructure.Storage
-        + uploadScene(name: String): Scene
-        + generateScene(seed: int): Scene
+        - currentFactory: IGameFactory
+        + setFactory(factory: IGameFactory)
+        + uploadScene(builder: IMapBuilder, name: String): Scene
+        + generateScene(builder: IMapBuilder, seed: int): Scene
         + dealDamage(source: GameObj)
         + moveObject(obj: GameObj, direction: Vector)
         + canMoveTo(x: int, y: int, movementType: MovementType): boolean
@@ -68,6 +103,8 @@ namespace Domain {
 
     ' Relationships
     Plot -> Scene : "manages state"
+    Plot --> IGameFactory : "uses for context"
+    Plot ..> IMapBuilder : "directs construction"
     Scene *-- GameObj
     Scene *-- Item
     Scene *-- Tile : "tile definitions"
@@ -75,8 +112,8 @@ namespace Domain {
     GameObj *-- IComponent : "composed of"
     IEffect ..> GameObj : "modifies via getComponent()"
     Tile ..> TilePassability : <<use>>
-    Plot ..> Tile : "checks passability"
-    Plot ..> TilePassability : <<use>>
     Plot ..> MovementType : <<use>>
+    Plot ..> Tile : "checks passability"
+
 }
 @enduml
