@@ -1,5 +1,5 @@
 @startuml
-title Roguelike - Component Decoration by Identity
+title Roguelike - State Pattern for Dynamic Behavior
 
 namespace Domain {
 
@@ -7,21 +7,46 @@ namespace Domain {
         + ident: String
     }
 
+    class HealthComponent implements IComponent {
+        + ident: String = "health"
+        - currentHp: int
+        - maxHp: int
+        + getHpPercentage(): double
+        + modifyHp(amount: int): void
+    }
+
     interface IMovementStrategy {
         + getDirection(coords: Pair<int>): Vector
     }
-
     class AggressiveStrategy implements IMovementStrategy
     class PassiveStrategy implements IMovementStrategy
     class ChickenStrategy implements IMovementStrategy
     class ConfusedStrategy implements IMovementStrategy
 
+    interface IMobState {
+        + updateState(context: MovementComponent, actor: GameObj): void
+        + getCurrentStrategy(): IMovementStrategy
+    }
+
+    class HealthyState implements IMobState {
+        - baseStrategy: IMovementStrategy
+        + updateState(context: MovementComponent, actor: GameObj): void
+        + getCurrentStrategy(): IMovementStrategy
+    }
+
+    class CowardlyState implements IMobState {
+        - fleeStrategy: IMovementStrategy = ChickenStrategy
+        + updateState(context: MovementComponent, actor: GameObj): void
+        + getCurrentStrategy(): IMovementStrategy
+    }
+
     class MovementComponent implements IComponent {
         + ident: String = "movement"
-        - strategy: IMovementStrategy
+        - currentState: IMobState
         - actor: GameObj
         + makeMovement(coords: Pair<int>): Vector
         + getStrategy(): IMovementStrategy
+        + changeState(newState: IMobState): void
     }
 
     interface IEffectDecorator {
@@ -58,10 +83,12 @@ namespace Domain {
     }
 
     GameObj *-- IComponent
-    MovementComponent o-- IMovementStrategy : "delegates logic"
+    MovementComponent *-- IMobState : "manages & delegates to"
+    IMobState ..> IMovementStrategy : "returns appropriate"
+    HealthyState ..> HealthComponent : "checks HP"
+    CowardlyState ..> HealthComponent : "checks HP"
     MovementComponentDecorator o-- MovementComponent : "wraps"
     ConfusionEffect ..> GameObj : "triggers"
     ConfusionEffect ..> ConfusionComponentDecorator : "creates"
 }
-
 @enduml

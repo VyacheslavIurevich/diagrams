@@ -1,6 +1,7 @@
 @startuml
 namespace Presentation {
     class IOManager {
+        - availibleCommands: Map<Input, Command>
         + callRenderer(input: Input, buffer: int[][])
     }
     class Input {
@@ -16,6 +17,10 @@ namespace Presentation {
         + refresh()
     }
 
+    class Command {
+        + execute()
+    }
+
     enum InputAction {
         MOVE_UP
         MOVE_DOWN
@@ -28,5 +33,6 @@ namespace Presentation {
     Input ..> InputAction : <<use>>
     IOManager -- Input
     IOManager -- Screen
+    IOManager *--> Command
 }
 @enduml

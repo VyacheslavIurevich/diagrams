@@ -10,7 +10,6 @@ namespace Application {
         - gamePlot: Domain.Plot
         - tileEngine: Infrastructure.TileEngine
         + initScene(initType: InitType, sceneIdent: String)
-        + computeChange(input: Presentation.InputAction)
         + killScene()
         + render(buf: Presentation.Screen.buffer, input: Presentation.Input)
         - renderMap(buf: Presentation.Screen.buffer, input: Presentation.Input)
@@ -21,3 +20,4 @@ namespace Application {
     Render ..> InitType : <<use>>
 }
 @enduml
+

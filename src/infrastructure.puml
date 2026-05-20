@@ -19,6 +19,8 @@ component Infrastructure {
         + loadScene(name: String): SceneData
         + saveScene(scene: Scene): void
         + getSprite(spriteIdent: int): Sprite
+        + saveMemento(slot: String, memento: Domain.GameStateMemento)
+        + loadMemento(slot: String): Domain.GameStateMemento
     }
 
     ' === РЕАЛИЗАЦИЯ ПАТТЕРНА СТРОИТЕЛЬ ===
@@ -39,7 +41,7 @@ component Infrastructure {
         + renderMap(display: Presentation.Screen, levelMap: int[][], tiles: Map<int, Domain.Tile>)       
         + renderSprite(display: Presentation.Screen, x: int, y: int, spriteIdent: int)
         + renderText(display: Presentation.Screen, x: int, y: int, text: String)
-        - loadSprite(spriteIdent: int): Sprite
+        + loadSprite(spriteIdent: int): Sprite
     }
 
     class SceneData {
@@ -67,6 +69,15 @@ component Infrastructure {
         + height: int
     }
 
+    class SaveManager {
+    - storage: Storage
+    - saves: Map<String, Domain.GameStateMemento>
+
+    + saveGame(slot: String, memento: Domain.GameStateMemento)
+    + loadGame(slot: String): Domain.GameStateMemento
+    + deleteSave(slot: String)
+    }
+
     Storage ..> SceneData : <<use>>
     Storage ..> Sprite : <<use>>
     ConcreteMapBuilder --> Storage : "reads data"
@@ -75,4 +86,7 @@ component Infrastructure {
     GameObjectData *-- ComponentData : "contains list of"
     TileEngine ..> Storage : "fetches sprites"
     GameObjectData ..> GameObjType : <<use>>
+    SaveManager --> Storage : persists saves
+    SaveManager --> Domain.GameStateMemento : manages
+    Storage ..> Domain.GameStateMemento : serializes
 @enduml

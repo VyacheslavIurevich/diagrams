@@ -93,6 +93,14 @@ namespace Domain {
         + moveObject(obj: GameObj, direction: Vector)
         + canMoveTo(x: int, y: int, movementType: MovementType): boolean
         + exitGame()
+        + createMemento(): GameStateMemento
+        + restore(memento: GameStateMemento)
+    }
+
+    class GameStateMemento {
+    - scene: Scene
+    - timestamp: DateTime
+    - seed: int
     }
 
     enum MovementType {
@@ -114,6 +122,8 @@ namespace Domain {
     Tile ..> TilePassability : <<use>>
     Plot ..> MovementType : <<use>>
     Plot ..> Tile : "checks passability"
+    Plot --> GameStateMemento : creates/restores
+    GameStateMemento *-- Scene : stores snapshot
 
 }
 @enduml
